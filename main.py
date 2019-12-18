@@ -21,7 +21,7 @@ h, w, c = image.shape
 
 img_homo = cv2.warpPerspective(image, homo, (w, h))
 
-#cv2.line(img_homo, (293, 55), (115, 55), (0,255,0), 2)
+cv2.line(img_homo, (293, 55), (115, 55), (0,255,0), 2)
 
 #homo, mask = cv2.findHomography(m, px, cv2.RANSAC, 5.0)
 homo_inverse = np.linalg.inv(homo)
