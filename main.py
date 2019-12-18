@@ -10,12 +10,16 @@ image = cv2.imread("match.jpg")
 #lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
 
 
+m = np.array([[11,0], [11, 5.5], [29.32, 5.5], [29.32, 0]]) #fields real coordinates in meters
+px = np.array([[11, 0], [11, 5.5], [29.32, 5.5], [29.32, 0]]) #pixels coodinates
+
+homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5)
 
 
+#Segmentation and threshholding
 
-#Segmentation and threshholding 
-hsv = cv2.cvtColor(image,cv2.COLOR_BGR2HSV)
-lower_green = np.array([80,40, 40]) 
+hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+lower_green = np.array([40, 40, 40])
 upper_green = np.array([70, 255, 255])
 
 #Define a mask ranging from lower to uppper
@@ -26,13 +30,14 @@ res = cv2.bitwise_and(image, image, mask=mask)
 res_bgr = cv2.cvtColor(res,cv2.COLOR_HSV2BGR)
 res_gray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
 
+
 #Defining a kernel to do morphological operation in threshold #image to get better output.
 '''
 kernel = np.ones((13,13),np.uint8)
 thresh = cv2.threshold(res_gray,127,255,cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
 thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 '''
-
+#cv2.imshow("BGR", image)
 cv2.imshow("BGR", res_bgr)
 cv2.imshow("Gray", res_gray)
 
