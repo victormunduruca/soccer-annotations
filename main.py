@@ -11,10 +11,14 @@ image = cv2.imread("match.jpg")
 
 
 m = np.array([[11,0], [11, 5.5], [29.32, 5.5], [29.32, 0]]) #fields real coordinates in meters
-px = np.array([[11, 0], [11, 5.5], [29.32, 5.5], [29.32, 0]]) #pixels coodinates
+px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]]) #pixels coodinates
 
-homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5)
+homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
 
+print(homo)
+
+h, w, c = image.shape
+im_dst = cv2.warpPerspective(image, homo, (w, h))
 
 #Segmentation and threshholding
 
@@ -37,10 +41,10 @@ kernel = np.ones((13,13),np.uint8)
 thresh = cv2.threshold(res_gray,127,255,cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
 thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 '''
-#cv2.imshow("BGR", image)
-cv2.imshow("BGR", res_bgr)
-cv2.imshow("Gray", res_gray)
-
+cv2.imshow("BGR", image)
+#cv2.imshow("BGR", res_bgr)
+#cv2.imshow("Gray", res_gray)
+cv2.imshow("Warped", im_dst)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
