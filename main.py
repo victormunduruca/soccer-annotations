@@ -10,7 +10,7 @@ image = cv2.imread("match.jpg")
 #lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
 
 
-m = np.array([[11,0], [11, 5.5], [29.32, 5.5], [29.32, 0]]) #fields real coordinates in meters
+m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]]) #fields real coordinates in meters
 px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]]) #pixels coodinates
 
 homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
