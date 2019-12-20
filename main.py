@@ -1,16 +1,22 @@
 import cv2 
 import numpy as np
 
-print("OpenCV version:")
-print(cv2.__version__)
 
+def convert_coordinate(x, y, homography):
+    p = np.array((x,y,1)).reshape((3,1))
+    temp_p = homography.dot(p)
+    sum = np.sum(temp_p ,1)
+    px = int(round(sum[0]/sum[2]))
+    py = int(round(sum[1]/sum[2]))
+    return px, py
 
+#Read image file
 image = cv2.imread("match.jpg")
 
 #lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
 
 
-#fields real coordinates in meters
+#Fields real coordinates in meters, manually input
 m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
 
 #pixels coodinates
@@ -19,6 +25,14 @@ px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
 
+#print(homo)
+
+px, py = convert_coordinate(180, 131, homo)
+
+print(px)
+print(py)
+
+'''
 #image dimensions
 h, w, c = image.shape
 
@@ -78,6 +92,9 @@ cv2.imshow("Image with line", img_add)
 #cv2.imshow("Gray", res_gray)
 #cv2.imshow("Homo", img_homo)
 #cv2.imshow("Straight", img_straight)
+
+'''
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
