@@ -1,6 +1,6 @@
 import cv2 
 import numpy as np
-
+import math
 
 def convert_coordinate(x, y, homography):
     p = np.array((x,y,1)).reshape((3,1))
@@ -10,6 +10,12 @@ def convert_coordinate(x, y, homography):
     py = int(round(sum[1]/sum[2]))
     return px, py
 
+def magnitude(a, b):
+    x_d = b[0]-a[0]
+    y_d = b[1] - a[1]
+    mag = math.sqrt((x_d)**2 + (y_d)**2)
+    return mag
+    
 #Read image file
 image = cv2.imread("match.jpg")
 
@@ -25,12 +31,19 @@ px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
 
-#print(homo)
-
 px, py = convert_coordinate(180, 131, homo)
 
-print(px)
-print(py)
+a = np.array([303, 117])
+b = np.array([566, 206])
+
+ax, ay = convert_coordinate(a[0], a[1], homo)
+bx, by = convert_coordinate(b[0], b[1], homo)
+
+a_np = np.array([ax, ay])
+b_np = np.array([bx, by])
+
+
+print(magnitude(a_np, b_np))
 
 '''
 #image dimensions
