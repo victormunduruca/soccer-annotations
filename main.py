@@ -29,7 +29,7 @@ img_blk = np.zeros((512,512,3), np.uint8)
 img_homo = cv2.warpPerspective(img_blk, homo, (w, h))
 
 #Draw line on transformed black image
-cv2.line(img_homo, (293, 45), (115, 45), (255,255,255), 2)
+cv2.line(img_homo, (293, 30), (115, 30), (255,255,255), 2)
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
@@ -65,6 +65,10 @@ thresh = cv2.bitwise_not(thresh)
 res_line = cv2.bitwise_and(img_straight, img_straight, mask=thresh)
 
 cv2.imshow("Original image", res_line)
+
+img_add = cv2.add(res_line, image)
+
+cv2.imshow("Image with line", img_add)
 
 #cv2.imshow("Original image", image)
 #cv2.imshow("Image with masked line", res_gray)
