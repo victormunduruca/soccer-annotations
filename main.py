@@ -28,7 +28,7 @@ def draw_circle(event,x,y,flags,param):
         positions.append([x,y])
         count+=1
 
-image = cv2.imread("match.jpg")
+image = cv2.imread("match2.jpg")
 
 # Defing a window named 'image'
 cv2.namedWindow('image')
@@ -40,22 +40,22 @@ while(True):
         break
 cv2.destroyAllWindows()
 
-#pts = np.float32(positions)
-for point in positions:
+px_points = np.array(positions)
+for point in px_points:
     print(point)
 
-'''
+
 #Fields real coordinates in meters, manually input
 m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
 
 #pixels coodinates
-px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
+#px_points = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
 
 #Homography between coodinates in pixels and field dimensions
-homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
+homo, mask = cv2.findHomography(px_points, m, cv2.RANSAC, 5.0)
 
 
-px, py = convert_coordinate(180, 131, homo)
+px_points, py = convert_coordinate(180, 131, homo)
 
 a = np.array([303, 117])
 b = np.array([566, 206])
@@ -134,4 +134,4 @@ cv2.imshow("Image with line", img_add)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
-'''
+
