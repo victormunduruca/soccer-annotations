@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import math
 
+positions=[]
+count=0
+
 def convert_coordinate(x, y, homography):
     p = np.array((x,y,1)).reshape((3,1))
     temp_p = homography.dot(p)
@@ -15,13 +18,33 @@ def magnitude(a, b):
     y_d = b[1] - a[1]
     mag = math.sqrt((x_d)**2 + (y_d)**2)
     return mag
-    
-#Read image file
+
+# Mouse callback function
+def draw_circle(event,x,y,flags,param):
+    global positions,count
+    # If event is Left Button Click then store the coordinate in the lists
+    if event == cv2.EVENT_LBUTTONUP:
+        cv2.circle(image,(x,y),2,(255,0,0),-1)
+        positions.append([x,y])
+        count+=1
+
 image = cv2.imread("match.jpg")
 
-#lines = cv2.HoughLines(edges, 1, np.pi/180, 200)
+# Defing a window named 'image'
+cv2.namedWindow('image')
+cv2.setMouseCallback('image',draw_circle)
+while(True):
+    cv2.imshow('image',image)
+    k = cv2.waitKey(20) & 0xFF
+    if k == 27:
+        break
+cv2.destroyAllWindows()
 
+#pts = np.float32(positions)
+for point in positions:
+    print(point)
 
+'''
 #Fields real coordinates in meters, manually input
 m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
 
@@ -30,6 +53,7 @@ px = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
 
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px, m, cv2.RANSAC, 5.0)
+
 
 px, py = convert_coordinate(180, 131, homo)
 
@@ -45,7 +69,7 @@ b_np = np.array([bx, by])
 
 print(magnitude(a_np, b_np))
 
-'''
+
 #image dimensions
 h, w, c = image.shape
 
@@ -106,8 +130,8 @@ cv2.imshow("Image with line", img_add)
 #cv2.imshow("Homo", img_homo)
 #cv2.imshow("Straight", img_straight)
 
-'''
 
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+'''
