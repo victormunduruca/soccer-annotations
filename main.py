@@ -107,7 +107,8 @@ if mode == 1:
 elif mode == 2:
     cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 0, 0), 2)
 elif mode == 3:
-    cv2.line(img_homo, (extra_x, extra_y), (352, 0), (255,0,0), 2)
+    kick_line = cv2.line(img_homo, (extra_x, extra_y), (352, 0), (255,0,0), 2)
+    dist_ball = magnitude((extra_x, extra_y), (352,0))
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
@@ -146,6 +147,8 @@ cv2.imshow("Original image", res_line)
 
 img_add = cv2.add(res_line, image)
 
+font = cv2.FONT_HERSHEY_SIMPLEX
+cv2.putText(img_add, str("%.2f" % (dist_ball/10)) + "m", (100, 100), font, 2, (255, 255, 255), 6)
 cv2.imshow("Image with line", img_add)
 
 #cv2.imshow("Original image", image)
