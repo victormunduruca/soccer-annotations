@@ -28,6 +28,7 @@ def draw_circle(event,x,y,flags,param):
         positions.append([x,y])
         count+=1
 
+#Read the image
 image = cv2.imread("match2.jpg")
 
 # Defing a window named 'image'
@@ -40,22 +41,21 @@ while(True):
         break
 cv2.destroyAllWindows()
 
+#Transform positions took from the user input to np array
 px_points = np.array(positions)
-for point in px_points:
-    print(point)
 
+print(px_points[0][0])
 
 #Fields real coordinates in meters, manually input
 m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
 
-#pixels coodinates
-#px_points = np.array([[303, 117], [180, 131], [430, 227], [566, 206]])
 
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px_points, m, cv2.RANSAC, 5.0)
 
-
-px_points, py = convert_coordinate(180, 131, homo)
+'''
+#Testing the conversion between points
+px, py = convert_coordinate(180, 131, homo)
 
 a = np.array([303, 117])
 b = np.array([566, 206])
@@ -68,7 +68,7 @@ b_np = np.array([bx, by])
 
 
 print(magnitude(a_np, b_np))
-
+'''
 
 #image dimensions
 h, w, c = image.shape
@@ -80,7 +80,7 @@ img_blk = np.zeros((512,512,3), np.uint8)
 img_homo = cv2.warpPerspective(img_blk, homo, (w, h))
 
 #Draw line on transformed black image
-cv2.line(img_homo, (293, 30), (115, 30), (255,255,255), 2)
+cv2.line(img_homo, convert_coordinate(px_points[0][0], px_points[0][1], homo), convert_coordinate(px_points[1][0], px_points[1][1], homo), (255,255,255), 2)
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
