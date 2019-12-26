@@ -36,7 +36,7 @@ def draw_circle(event,x,y,flags,param):
         count+=1
 
 #Read the image
-image = cv2.imread("match2.jpg")
+image = cv2.imread("match.jpg")
 
 # Defing a window named 'image'
 cv2.namedWindow('image')
@@ -44,9 +44,17 @@ cv2.setMouseCallback('image',draw_circle)
 while(True):
     cv2.imshow('image',image)
     k = cv2.waitKey(20) & 0xFF
-    if k == 27:
+    if k == 49:
         mode = 1
         break
+    elif k == 50:
+        mode = 2
+        break
+    elif k == 51:
+        mode = 3
+        break
+        
+
 cv2.destroyAllWindows()
 
 #Transform positions took from the user input to np array
@@ -84,21 +92,20 @@ print(magnitude(a_np, b_np))
 #image dimensions
 h, w, c = image.shape
 
-# IF mode = 1
-
 # Create a black image
 img_blk = np.zeros((512,512,3), np.uint8)
 
 # Black imaged on the perspective of the field dimensions (top-view)
 img_homo = cv2.warpPerspective(img_blk, homo, (w, h))
 
-#Draw line on transformed black image
-#cv2.line(img_homo, convert_coordinate(px_points[0][0], px_points[0][1], homo), convert_coordinate(px_points[1][0], px_points[1][1], homo), (255,255,255), 2)
-
 #Getting converted point of the extra point (that can be the ball, offside player or position of free kick)
 extra_x, extra_y = convert_coordinate(extra[0][0], extra[0][1], homo)
 
-cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,255,255), 2)
+if mode == 1:
+    #Draw line from an edge to another
+    cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,255,255), 2)
+elif mode == 2:
+    cv2.circle(img_homo, (extra_x, extra_y), 90, (255, 255, 255))
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
