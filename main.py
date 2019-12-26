@@ -103,11 +103,11 @@ extra_x, extra_y = convert_coordinate(extra[0][0], extra[0][1], homo)
 
 if mode == 1:
     #Draw line from an edge to another
-    cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,255,255), 2)
+    cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,0,0), 2)
 elif mode == 2:
-    cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 255, 255))
-#elif mode == 3:
-    
+    cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 0, 0), 2)
+elif mode == 3:
+    cv2.line(img_homo, (extra_x, extra_y), (352, 0), (255,0,0), 2)
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
