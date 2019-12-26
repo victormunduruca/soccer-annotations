@@ -36,7 +36,7 @@ def draw_circle(event,x,y,flags,param):
         count+=1
 
 #Read the image
-image = cv2.imread("match.jpg")
+image = cv2.imread("match2.jpg")
 
 # Defing a window named 'image'
 cv2.namedWindow('image')
@@ -65,8 +65,8 @@ print(px_points)
 print(extra[0][0])
 
 #Fields real coordinates in meters, manually input
-m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
-
+#m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
+m = np.array([[260,0], [260, 55], [443.2, 55], [443.2, 0]])
 
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px_points, m, cv2.RANSAC, 5.0)
@@ -105,7 +105,9 @@ if mode == 1:
     #Draw line from an edge to another
     cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,255,255), 2)
 elif mode == 2:
-    cv2.circle(img_homo, (extra_x, extra_y), 90, (255, 255, 255))
+    cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 255, 255))
+#elif mode == 3:
+    
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
