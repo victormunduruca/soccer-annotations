@@ -3,7 +3,11 @@ import numpy as np
 import math
 
 positions=[]
+extra=[]
 count=0
+
+#Mode variable used to select one the three modes (offside (0), freekick (1) and circle (2))
+mode = 0
 
 def convert_coordinate(x, y, homography):
     p = np.array((x,y,1)).reshape((3,1))
@@ -25,7 +29,10 @@ def draw_circle(event,x,y,flags,param):
     # If event is Left Button Click then store the coordinate in the lists
     if event == cv2.EVENT_LBUTTONUP:
         cv2.circle(image,(x,y),2,(255,0,0),-1)
-        positions.append([x,y])
+        if count < 4:
+            positions.append([x,y])
+        elif count == 4:
+            extra.append([x,y])
         count+=1
 
 #Read the image
@@ -38,13 +45,16 @@ while(True):
     cv2.imshow('image',image)
     k = cv2.waitKey(20) & 0xFF
     if k == 27:
+        mode = 1
         break
 cv2.destroyAllWindows()
 
 #Transform positions took from the user input to np array
 px_points = np.array(positions)
 
-print(px_points[0][0])
+print(count)
+print(px_points)
+print(extra[0][0])
 
 #Fields real coordinates in meters, manually input
 m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
@@ -70,8 +80,11 @@ b_np = np.array([bx, by])
 print(magnitude(a_np, b_np))
 '''
 
+
 #image dimensions
 h, w, c = image.shape
+
+# IF mode = 1
 
 # Create a black image
 img_blk = np.zeros((512,512,3), np.uint8)
@@ -80,7 +93,12 @@ img_blk = np.zeros((512,512,3), np.uint8)
 img_homo = cv2.warpPerspective(img_blk, homo, (w, h))
 
 #Draw line on transformed black image
-cv2.line(img_homo, convert_coordinate(px_points[0][0], px_points[0][1], homo), convert_coordinate(px_points[1][0], px_points[1][1], homo), (255,255,255), 2)
+#cv2.line(img_homo, convert_coordinate(px_points[0][0], px_points[0][1], homo), convert_coordinate(px_points[1][0], px_points[1][1], homo), (255,255,255), 2)
+
+#Getting converted point of the extra point (that can be the ball, offside player or position of free kick)
+extra_x, extra_y = convert_coordinate(extra[0][0], extra[0][1], homo)
+
+cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,255,255), 2)
 
 #Inverse of the calculated homography
 homo_inverse = np.linalg.inv(homo)
