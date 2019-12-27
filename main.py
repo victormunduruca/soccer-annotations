@@ -65,29 +65,10 @@ print(px_points)
 print(extra[0][0])
 
 #Fields real coordinates in meters, manually input
-#m = np.array([[110,0], [110, 55], [293.2, 55], [293.2, 0]])
 m = np.array([[260,0], [260, 55], [443.2, 55], [443.2, 0]])
 
 #Homography between coodinates in pixels and field dimensions
 homo, mask = cv2.findHomography(px_points, m, cv2.RANSAC, 5.0)
-
-'''
-#Testing the conversion between points
-px, py = convert_coordinate(180, 131, homo)
-
-a = np.array([303, 117])
-b = np.array([566, 206])
-
-ax, ay = convert_coordinate(a[0], a[1], homo)
-bx, by = convert_coordinate(b[0], b[1], homo)
-
-a_np = np.array([ax, ay])
-b_np = np.array([bx, by])
-
-
-print(magnitude(a_np, b_np))
-'''
-
 
 #image dimensions
 h, w, c = image.shape
@@ -103,9 +84,9 @@ extra_x, extra_y = convert_coordinate(extra[0][0], extra[0][1], homo)
 
 if mode == 1:
     #Draw line from an edge to another
-    cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,0,0), 2)
+    cv2.line(img_homo, (0, extra_y), (w, extra_y), (255,0,0), 1)
 elif mode == 2:
-    cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 0, 0), 2)
+    cv2.circle(img_homo, (extra_x, extra_y), 91, (255, 255, 255), 2)
 elif mode == 3:
     kick_line = cv2.line(img_homo, (extra_x, extra_y), (352, 0), (255,0,0), 2)
     dist_ball = magnitude((extra_x, extra_y), (352,0))
@@ -134,12 +115,16 @@ res_bgr = cv2.cvtColor(res,cv2.COLOR_HSV2BGR)
 res_gray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
 
 
-#Defining a kernel to do morphological operation in threshold #image to get better output.
+#Defining a kernel to do morphological operation in threshold image to get better output.
 
 kernel = np.ones((13,13),np.uint8)
 thresh = cv2.threshold(res_gray,100,255,cv2.THRESH_BINARY_INV |  cv2.THRESH_OTSU)[1]
-#thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 thresh = cv2.bitwise_not(thresh)
+
+imagenzinea = cv2.bitwise_and(image, image, mask=thresh)
+
+cv2.imshow("Masked image", imagenzinea)
+
 
 res_line = cv2.bitwise_and(img_straight, img_straight, mask=thresh)
 
@@ -147,8 +132,10 @@ cv2.imshow("Original image", res_line)
 
 img_add = cv2.add(res_line, image)
 
-font = cv2.FONT_HERSHEY_SIMPLEX
-cv2.putText(img_add, str("%.2f" % (dist_ball/10)) + "m", (100, 100), font, 2, (255, 255, 255), 6)
+if mode == 3:
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(img_add, str("%.2f" % (dist_ball/10)) + "m", (100, 100), font, 1, (255, 255, 255), 4)
+
 cv2.imshow("Image with line", img_add)
 
 #cv2.imshow("Original image", image)
